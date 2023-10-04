@@ -25,7 +25,7 @@ namespace GraphFrontend2 {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int Vertexradius {
             get {
                 return ((int)(this["Vertexradius"]));

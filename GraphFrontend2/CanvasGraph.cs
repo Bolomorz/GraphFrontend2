@@ -185,7 +185,7 @@ namespace GraphFrontend2
                     DrawText(v.position, v.name, Brushes.Blue);
                 }
                 else
-                {
+                {  
                     DrawCircle(v.position, Settings1.Default.Vertexradius, Brushes.Black);
                     DrawText(v.position, v.name, Brushes.Black);
                 }
@@ -209,13 +209,13 @@ namespace GraphFrontend2
         {
             Ellipse circle = new Ellipse()
             {
-                Width = r,
-                Height = r,
+                Width = r/2,
+                Height = r/2,
                 Stroke = brush,
                 StrokeThickness = 1
             };
-            Canvas.SetLeft(circle, pos.x - r/2);
-            Canvas.SetTop(circle, pos.y - r/2);
+            Canvas.SetLeft(circle, pos.x - r/4);
+            Canvas.SetTop(circle, pos.y - r/4);
             canvas.Children.Add(circle);
         }
 
@@ -228,7 +228,7 @@ namespace GraphFrontend2
             var path = new Path();
             path.Data = bgeom;
             path.Stroke = brush;
-            path.StrokeThickness = 1;
+            path.StrokeThickness = 0.5;
             canvas.Children.Add(path);
         }
 
