@@ -25,10 +25,10 @@ namespace GraphFrontend2 {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public double Vertexradius {
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int Vertexradius {
             get {
-                return ((double)(this["Vertexradius"]));
+                return ((int)(this["Vertexradius"]));
             }
         }
         
@@ -43,10 +43,19 @@ namespace GraphFrontend2 {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public double Fontsize {
             get {
                 return ((double)(this["Fontsize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Graph")]
+        public string Graphtype {
+            get {
+                return ((string)(this["Graphtype"]));
             }
         }
     }

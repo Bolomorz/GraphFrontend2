@@ -14,7 +14,7 @@ using System.Globalization;
 namespace GraphFrontend2
 {
     public enum GraphType { Graph, DirectedGraph, WeightedGraph, WeightedDirectedGraph }
-    internal class CanvasGraph
+    public class CanvasGraph
     {
         protected Graph graph { get; set; }
         protected Canvas canvas { get; set; }
@@ -51,6 +51,23 @@ namespace GraphFrontend2
             canvas.Children.Clear();
         }
 
+        public CanvasGraph(Graph _graph, Canvas _canvas)
+        {
+            graph = _graph;
+            canvas = _canvas;
+            activevertex = null;
+            activeedge = null;
+            vertexcount = 0;
+            foreach(var element in graph.vertices) vertexcount++;
+            canvas.Children.Clear();
+
+        }
+
+        public void ReDraw()
+        {
+            DrawGraph();
+        }
+
         public void OnClick(Point mouse)
         {
             if(activevertex is not null)
@@ -78,10 +95,9 @@ namespace GraphFrontend2
                 }
                 else
                 {
-                    activevertex.position = new Position(mouse.X, mouse.Y);
-                    DrawGraph();
-                    activevertex = null; 
+                    activevertex.position = new Position(mouse.X, mouse.Y); 
                 }
+                activevertex = null;
             }
             else if(activeedge is not null)
             {
@@ -89,15 +105,12 @@ namespace GraphFrontend2
                 if(edg is not null && edg == activeedge)
                 {
                     //Implement DoubleClick
-                    if(IsPointInRectangleOfWeighting(mouse, edg))
-                    {
-
-                    }
                 }
-                else if(edg is not null)
+                else
                 {
-                    edg.position = new Position(mouse.X, mouse.Y);
+                    activeedge.position = new Position(mouse.X, mouse.Y);
                 }
+                activeedge = null;
             }
             else
             {
@@ -118,6 +131,7 @@ namespace GraphFrontend2
                     vertexcount++;
                 }
             }
+            DrawGraph();
         }
 
         private bool IsPointInCircleOfVertex(Point p, Vertex u)
@@ -130,7 +144,7 @@ namespace GraphFrontend2
         private bool IsPointInRectangleOfEdge(Point p, Edge e)
         {
             string line = e.name + ": " + e.weight;
-            FormattedText formatted = new FormattedText(line, CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight, new Typeface(Settings1.Default.Font), Settings1.Default.Fontsize, Brushes.Black);
+            FormattedText formatted = new FormattedText(line, CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight, new Typeface(Settings1.Default.Font), Settings1.Default.Fontsize, Brushes.Black, VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
             var width = formatted.Width;
             var height = formatted.Height;
             var x = e.position.x;
@@ -139,26 +153,6 @@ namespace GraphFrontend2
             var top = y + height / 2;
             var right = x + width / 2;
             var bottom = y - height / 2;
-            if (p.X >= left && p.X <= right && p.Y <= top && p.Y >= bottom) return true; else return false;
-        }
-
-        private bool IsPointInRectangleOfWeighting(Point p, Edge e)
-        {
-            if (e.weight is null) return false;
-            string line = e.name + ": " + e.weight;
-            string weight = e.weight.ToString();
-            FormattedText formattedline = new FormattedText(line, CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight, new Typeface(Settings1.Default.Font), Settings1.Default.Fontsize, Brushes.Black);
-            var widthline = formattedline.Width;
-            var heightline = formattedline.Height;
-            FormattedText formattedweight = new FormattedText(weight, CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight, new Typeface(Settings1.Default.Font), Settings1.Default.Fontsize, Brushes.Black);
-            var widthweight = formattedweight.Width;
-            var heightweight = formattedweight.Height;
-            var x = e.position.x;
-            var y = e.position.y;
-            var right = x + widthline / 2;
-            var left = right - widthweight;
-            var top = y + heightline / 2;
-            var bottom = y - heightline / 2;
             if (p.X >= left && p.X <= right && p.Y <= top && p.Y >= bottom) return true; else return false;
         }
 
@@ -182,7 +176,84 @@ namespace GraphFrontend2
 
         private void DrawGraph()
         {
+            canvas.Children.Clear();
+            foreach(var v in graph.vertices)
+            {
+                if(activevertex is not null && activevertex == v)
+                {
+                    DrawCircle(v.position, Settings1.Default.Vertexradius, Brushes.Blue);
+                    DrawText(v.position, v.name, Brushes.Blue);
+                }
+                else
+                {
+                    DrawCircle(v.position, Settings1.Default.Vertexradius, Brushes.Black);
+                    DrawText(v.position, v.name, Brushes.Black);
+                }
+            }
+            foreach(var e in graph.edges)
+            {
+                if(activeedge is not null && activeedge == e)
+                {
+                    DrawLine(e.position, e.v1.position, e.v2.position, Brushes.Blue);
+                    DrawText(e.position, e.name + ": " + e.weight, Brushes.Blue);
+                }
+                else
+                {
+                    DrawLine(e.position, e.v1.position, e.v2.position, Brushes.Black);
+                    DrawText(e.position, e.name + ": " + e.weight, Brushes.Black);
+                }
+            }
+        }
 
+        private void DrawCircle(Position pos, int r, Brush brush)
+        {
+            Ellipse circle = new Ellipse()
+            {
+                Width = r,
+                Height = r,
+                Stroke = brush,
+                StrokeThickness = 1
+            };
+            Canvas.SetLeft(circle, pos.x - r/2);
+            Canvas.SetTop(circle, pos.y - r/2);
+            canvas.Children.Add(circle);
+        }
+
+        private void DrawText(Position pos, string text, Brush brush)
+        {
+            FormattedText formatted = new FormattedText(text, CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight, new Typeface(Settings1.Default.Font), Settings1.Default.Fontsize, brush, VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
+            var width = formatted.Width;
+            var height = formatted.Height;
+            var bgeom = formatted.BuildGeometry(new System.Windows.Point(pos.x - width / 2, pos.y - height / 2));
+            var path = new Path();
+            path.Data = bgeom;
+            path.Stroke = brush;
+            path.StrokeThickness = 1;
+            canvas.Children.Add(path);
+        }
+
+        private void DrawLine(Position pos, Position ver1, Position ver2, Brush brush)
+        {
+            Line line1 = new Line()
+            {
+                X1 = ver1.x,
+                Y1 = ver1.y,
+                X2 = pos.x,
+                Y2 = pos.y,
+                Stroke = brush,
+                StrokeThickness = 1
+            };
+            canvas.Children.Add(line1);
+            Line line2 = new Line()
+            {
+                X1 = pos.x,
+                Y1 = pos.y,
+                X2 = ver2.x,
+                Y2 = ver2.y,
+                Stroke = brush,
+                StrokeThickness = 1
+            };
+            canvas.Children.Add(line2);
         }
     }
 }

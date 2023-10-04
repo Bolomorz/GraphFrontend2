@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using Graphs;
 using System.Windows.Shapes;
 
 namespace GraphFrontend2
@@ -20,14 +21,59 @@ namespace GraphFrontend2
     /// </summary>
     public partial class MainWindow : Window
     {
+        protected CanvasGraph current { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+            try
+            {
+                current = new CanvasGraph((GraphType)Enum.Parse(typeof(GraphType), Settings1.Default.Graphtype), canvas1);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                current = new CanvasGraph(GraphType.Graph, canvas1);
+            }
+        }
+
+        public static System.Drawing.Point ConvertToPoint(Point pos)
+        {
+            return new System.Drawing.Point(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y));
+        }
+
+        public void ChangeGraph(Graph graph)
+        {
+            current = new CanvasGraph(graph, canvas1);
+            current.ReDraw();
         }
 
         private void CanvasButtonClick(object sender, MouseButtonEventArgs e)
         {
             var pos = e.GetPosition(canvas1);
+            current.OnClick(MainWindow.ConvertToPoint(pos));
+        }
+
+        private void SettingsButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LoadButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SaveButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void tbkeydown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+
+            }
         }
     }
 }
