@@ -36,7 +36,7 @@ namespace GraphFrontend2
             }
         }
 
-        public static System.Drawing.Point ConvertToPoint(Point pos)
+        public static System.Drawing.Point ConvertToPoint(System.Windows.Point pos)
         {
             return new System.Drawing.Point(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y));
         }
