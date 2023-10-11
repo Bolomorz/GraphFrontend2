@@ -11,8 +11,7 @@
         <Button x:Name="SettingsButton" Content="Settings" HorizontalAlignment="Left" Margin="1680,30,0,0" VerticalAlignment="Top" Click="SettingsButtonClick" Width="70"/>
         <Button x:Name="LoadSavedButton" Content="Load" HorizontalAlignment="Left" Margin="1600,30,0,0" VerticalAlignment="Top" Click="LoadButtonClick" Width="70"/>
         <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Left" Margin="1520,30,0,0" VerticalAlignment="Top" Click="SaveButtonClick" Width="70"/>
+        <Button x:Name="NewButton" Content="New" HorizontalAlignment="Left" Margin="1440,30,0,0" VerticalAlignment="Top" Click="NewButtonClick" Width="70"/>
         <TextBox x:Name="CommandTB" HorizontalAlignment="Left" Margin="50,30,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="800" KeyDown="tbkeydown"/>
-
-
     </Grid>
 </Window>

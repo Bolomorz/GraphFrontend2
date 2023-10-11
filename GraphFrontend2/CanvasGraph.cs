@@ -10,6 +10,7 @@ using System.Windows.Shapes;
 using System.Drawing;
 using Graphs;
 using System.Globalization;
+using System.Runtime.ConstrainedExecution;
 
 namespace GraphFrontend2
 {
@@ -64,7 +65,7 @@ namespace GraphFrontend2
 
         }
 
-        public void ReDraw()
+        public void Draw()
         {
             DrawGraph();
         }
@@ -92,7 +93,8 @@ namespace GraphFrontend2
                 }
                 else if(ver is not null && activevertex == ver)
                 {
-                    .//Implement DoubleClick
+                    ConfigWindow cw = new ConfigWindow(ver);
+                    cw.Show();
                 }
                 else
                 {
@@ -105,7 +107,7 @@ namespace GraphFrontend2
                 var edg = EdgeOfPosition(mouse);
                 if(edg is not null && edg == activeedge)
                 {
-                    .//Implement DoubleClick
+                    //Implement DoubleClick
                 }
                 else
                 {
@@ -135,7 +137,7 @@ namespace GraphFrontend2
             DrawGraph();
         }
 
-        public void Command(string command)
+        public List<string> Command(string command)
         {
             command = command.ToLower();
             var strings = command.Split(' ');
@@ -177,27 +179,183 @@ namespace GraphFrontend2
                     if(type != GraphType.WeightedDirectedGraph)
                     {
                         lines.Add("[Dijkstra]");
-                        lines.Add("cannot use dijkstra on graph other than WeightedDirectedGraph");
+                        lines.Add("cannot use Dijkstra on graph other than WeightedDirectedGraph");
                         break;
                     }
                     if(strings.Length == 2)
                     {
-                        var ver = GetVertexInGraphByName(strings[1]);
-                        if(ver is null)
+                        var source = GetVertexInGraphByName(strings[1]);
+                        if(source is null && strings[1] != "?")
                         {
                             lines.Add("[Dijkstra]");
                             lines.Add(String.Format("vertex {0} not found", strings[1]));
                         }
+                        else if (source is null)
+                        {
+                            lines.Add("[Dijkstra]");
+                            lines.Add("\tcalculate shortestpath from source vertex to every other vertex");
+                            lines.Add("\tsyntax: dijkstra source");
+                            lines.Add("\tsyntax: dijkstra source target");
+                        }
+                        else
+                        {
+                            Dijkstra djk = new Dijkstra((DirectedGraph)graph, source);
+                            var solution = djk.GetElements();
+                            lines.Add("[Dijkstra]");
+                            lines.Add("startvertex: " + source);
+                            foreach(var element in solution)
+                            {
+                                lines.Add("-----------------------------------------------");
+                                lines.Add("vertex: " + element.Item1);
+                                lines.Add("distance: " + element.Item2);
+                                lines.Add("predecessor: " + element.Item3);
+                                string path = "shortestpath: ";
+                                foreach(var ele in element.Item4)
+                                {
+                                    path += "(" + ele + ") ";
+                                }
+                                lines.Add(path);
+                            }
+                        }
+                    }
+                    else if(strings.Length == 3)
+                    {
+                        var source = GetVertexInGraphByName(strings[1]);
+                        var target = GetVertexInGraphByName(strings[2]);
+                        if(source is null)
+                        {
+                            lines.Add("[Dijkstra]");
+                            lines.Add(String.Format("vertex {0} not found", strings[1]));
+                        }
+                        else if(target is null)
+                        {
+                            lines.Add("[Dijkstra]");
+                            lines.Add(String.Format("vertex {0} not found", strings[1]));
+                        }
+                        else
+                        {
+                            Dijkstra djk = new Dijkstra((DirectedGraph)graph, source);
+                            var solution = djk.GetElement(target);
+                            lines.Add("[Dijkstra]");
+                            lines.Add("startvertex: " + source);
+                            lines.Add("-----------------------------------------------");
+                            if (solution is not null)
+                            {
+                                lines.Add("vertex: " + solution.Item1);
+                                lines.Add("distance: " + solution.Item2);
+                                lines.Add("predecessor: " + solution.Item3);
+                                string path = "shortestpath: ";
+                                foreach (var ele in solution.Item4)
+                                {
+                                    path += "(" + ele + ") ";
+                                }
+                                lines.Add(path);
+                            }
+                            else
+                            {
+                                lines.Add(String.Format("vertex {0} not found", target));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        lines.Add("[Dijkstra]");
+                        lines.Add("\tcalculate shortestpath from source vertex to every other vertex");
+                        lines.Add("\tsyntax: dijkstra source");
+                        lines.Add("\tsyntax: dijkstra source target");
                     }
                     break;
                 case "bellmanford":
-                    
+                    if (type != GraphType.WeightedDirectedGraph)
+                    {
+                        lines.Add("[BellmanFord]");
+                        lines.Add("cannot use BellmanFord on graph other than WeightedDirectedGraph");
+                        break;
+                    }
+                    if(strings.Length == 2)
+                    {
+                        var source = GetVertexInGraphByName(strings[1]);
+                        if(source is null && strings[1] != "?")
+                        {
+                            lines.Add("[BellmanFord]");
+                            lines.Add(String.Format("vertex {0} not found", strings[1]));
+                        }
+                        else if(source is null)
+                        {
+                            lines.Add("[BellmanFord]");
+                            lines.Add("\tcalculate distance from source vertex to every other vertex");
+                            lines.Add("\tsyntax: bellmanford source");
+                            lines.Add("\tsyntax: bellmanford source target");
+                        }
+                        else
+                        {
+                            var bf = new BellmanFord((DirectedGraph)graph, source);
+                            var solution = bf.GetElements();
+                            lines.Add("[BellmanFord]");
+                            lines.Add("startvertex: " + source);
+                            foreach (var element in solution)
+                            {
+                                lines.Add("-----------------------------------------------");
+                                lines.Add("vertex: " + element.Item1);
+                                lines.Add("distance: " + element.Item2);
+                                lines.Add("predecessor: " + element.Item3);
+                            }
+                        }
+                    }
+                    else if(strings.Length == 3)
+                    {
+                        var source = GetVertexInGraphByName(strings[1]);
+                        var target = GetVertexInGraphByName(strings[2]);
+                        if (strings[1] == "?" || strings[2] == "?")
+                        {
+                            lines.Add("[BellmanFord]");
+                            lines.Add("\tcalculate distance from source vertex to every other vertex");
+                            lines.Add("\tsyntax: bellmanford source");
+                            lines.Add("\tsyntax: bellmanford source target");
+                        }
+                        else if(source is null)
+                        {
+                            lines.Add("[BellmanFord]");
+                            lines.Add(String.Format("vertex {0} not found", strings[1]));
+                        }
+                        else if(target is null)
+                        {
+                            lines.Add("[BellmanFord]");
+                            lines.Add(String.Format("vertex {0} not found", strings[2]));
+                        }
+                        else
+                        {
+                            var bf = new BellmanFord((DirectedGraph)graph, source);
+                            var solution = bf.GetElement(target);
+                            lines.Add("[BellmanFord]");
+                            lines.Add("startvertex: " + source);
+                            if (solution is not null)
+                            {
+                                lines.Add("-----------------------------------------------");
+                                lines.Add("vertex: " + solution.Item1);
+                                lines.Add("distance: " + solution.Item2);
+                                lines.Add("predecessor: " + solution.Item3);
+                            }
+                            else
+                            {
+                                lines.Add(String.Format("vertex {0} not found", target));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        lines.Add("[BellmanFord]");
+                        lines.Add("\tcalculate distance from source vertex to every other vertex");
+                        lines.Add("\tsyntax: bellmanford source");
+                        lines.Add("\tsyntax: bellmanford source target");
+                    }
                     break;
                 default:
                     lines.Add("enter 'help' for help");
                     lines.Add("enter 'controls' for controls");
                     break;
             }
+            return lines;
         }
 
         private Vertex? GetVertexInGraphByName(string name)
@@ -329,6 +487,51 @@ namespace GraphFrontend2
                 StrokeThickness = 1
             };
             canvas.Children.Add(line2);
+            if (type == GraphType.DirectedGraph || type == GraphType.WeightedDirectedGraph)
+            {
+                DrawArrow(ver1, pos, brush);
+                DrawArrow(pos, ver2, brush);
+            }
+        }
+
+        private void DrawArrow(Position p1, Position p2, Brush brush)
+        {
+            GeometryGroup lg = new GeometryGroup();
+            double theta = Math.Atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+
+            PathGeometry pg = new PathGeometry();
+            PathFigure pf = new PathFigure();
+            System.Windows.Point p = new System.Windows.Point(p1.x + ((p2.x - p1.x) / 1.35), p1.y + ((p2.y - p1.y) / 1.35));
+            pf.StartPoint = p;
+
+            System.Windows.Point lpoint = new System.Windows.Point(p.X + 6, p.Y + 15);
+            System.Windows.Point rpoint = new System.Windows.Point(p.X - 6, p.Y + 15);
+            LineSegment seg1 = new LineSegment();
+            seg1.Point = lpoint;
+            pf.Segments.Add(seg1);
+
+            LineSegment seg2 = new LineSegment();
+            seg2.Point = rpoint;
+            pf.Segments.Add(seg2);
+
+            LineSegment seg3 = new LineSegment();
+            seg3.Point = p;
+            pf.Segments.Add(seg3);
+
+            pg.Figures.Add(pf);
+            RotateTransform transform = new RotateTransform();
+            transform.Angle = theta + 90;
+            transform.CenterX = p.X;
+            transform.CenterY = p.Y;
+            pg.Transform = transform;
+            lg.Children.Add(pg);
+
+            Path path = new Path();
+            path.Data = lg;
+            path.StrokeThickness = 1;
+            path.Stroke = path.Fill = brush;
+
+            canvas.Children.Add(path);
         }
     }
 }

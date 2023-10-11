@@ -41,10 +41,23 @@ namespace GraphFrontend2
             return new System.Drawing.Point(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y));
         }
 
-        public void ChangeGraph(Graph graph, GraphType type)
+        public void LoadGraph(CanvasGraph cg)
         {
-            current = new CanvasGraph(graph, type, canvas1);
-            current.ReDraw();
+            current = cg;
+            current.Draw();
+        }
+
+        public void NewGraph()
+        {
+            try
+            {
+                current = new CanvasGraph((GraphType)Enum.Parse(typeof(GraphType), Settings1.Default.Graphtype), canvas1);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                current = new CanvasGraph(GraphType.Graph, canvas1);
+            }
         }
 
         private void CanvasButtonClick(object sender, MouseButtonEventArgs e)
@@ -72,8 +85,15 @@ namespace GraphFrontend2
         {
             if(e.Key == Key.Enter)
             {
-                current.Command(CommandTB.Text);
+                var lines = current.Command(CommandTB.Text);
+                OutputWindow op = new OutputWindow(lines, CommandTB.Text);
+                op.Show();
             }
+        }
+
+        private void NewButtonClick(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
