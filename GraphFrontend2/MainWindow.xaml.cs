@@ -41,9 +41,9 @@ namespace GraphFrontend2
             return new System.Drawing.Point(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y));
         }
 
-        public void ChangeGraph(Graph graph)
+        public void ChangeGraph(Graph graph, GraphType type)
         {
-            current = new CanvasGraph(graph, canvas1);
+            current = new CanvasGraph(graph, type, canvas1);
             current.ReDraw();
         }
 
@@ -72,7 +72,7 @@ namespace GraphFrontend2
         {
             if(e.Key == Key.Enter)
             {
-
+                current.Command(CommandTB.Text);
             }
         }
     }

@@ -51,10 +51,11 @@ namespace GraphFrontend2
             canvas.Children.Clear();
         }
 
-        public CanvasGraph(Graph _graph, Canvas _canvas)
+        public CanvasGraph(Graph _graph, GraphType _type, Canvas _canvas)
         {
             graph = _graph;
             canvas = _canvas;
+            type = _type;
             activevertex = null;
             activeedge = null;
             vertexcount = 0;
@@ -91,7 +92,7 @@ namespace GraphFrontend2
                 }
                 else if(ver is not null && activevertex == ver)
                 {
-                    //Implement DoubleClick
+                    .//Implement DoubleClick
                 }
                 else
                 {
@@ -104,7 +105,7 @@ namespace GraphFrontend2
                 var edg = EdgeOfPosition(mouse);
                 if(edg is not null && edg == activeedge)
                 {
-                    //Implement DoubleClick
+                    .//Implement DoubleClick
                 }
                 else
                 {
@@ -132,6 +133,80 @@ namespace GraphFrontend2
                 }
             }
             DrawGraph();
+        }
+
+        public void Command(string command)
+        {
+            command = command.ToLower();
+            var strings = command.Split(' ');
+            var lines = new List<string>();
+            switch(strings[0])
+            {
+                case "help":
+                    lines.Add("[Help]");
+                    lines.Add("[Controls]");
+                    lines.Add("\tenter 'controls' for controls");
+                    lines.Add("[Algorithms]");
+                    lines.Add("\tenter vertices (source, target) by name");
+                    lines.Add("[Dijkstra]");
+                    lines.Add("\tcalculate shortestpath from source vertex to every other vertex");
+                    lines.Add("\tsyntax: dijkstra source");
+                    lines.Add("\tsyntax: dijkstra source target");
+                    lines.Add("[BellmanFord]");
+                    lines.Add("\tcalculate distance from source vertex to every other vertex");
+                    lines.Add("\tsyntax: bellmanford source");
+                    lines.Add("\tsyntax: bellmanford source target");
+                    break;
+                case "controls":
+                    lines.Add("[Controls]");
+                    lines.Add("click on free space to create new vertex");
+                    lines.Add("activate vertex by clicking on circle of vertex");
+                    lines.Add("activate edge by clicking on label of edge");
+                    lines.Add("activated vertex or edge will be highlighted blue");
+                    lines.Add("[Activated vertex]");
+                    lines.Add("\tclick on activated vertex to open config menu for vertex");
+                    lines.Add("\tclick on other vertex to create edge between vertices");
+                    lines.Add("\tclick on free space to relocate vertex");
+                    lines.Add("\tpress 'DEL' to delete vertex");
+                    lines.Add("[Activated edge]");
+                    lines.Add("\tclick on activated edge to open config menu for edge");
+                    lines.Add("\tclick on free space to relocate label of edge");
+                    lines.Add("\tpress 'DEL' to delete edge");
+                    break;
+                case "dijkstra":
+                    if(type != GraphType.WeightedDirectedGraph)
+                    {
+                        lines.Add("[Dijkstra]");
+                        lines.Add("cannot use dijkstra on graph other than WeightedDirectedGraph");
+                        break;
+                    }
+                    if(strings.Length == 2)
+                    {
+                        var ver = GetVertexInGraphByName(strings[1]);
+                        if(ver is null)
+                        {
+                            lines.Add("[Dijkstra]");
+                            lines.Add(String.Format("vertex {0} not found", strings[1]));
+                        }
+                    }
+                    break;
+                case "bellmanford":
+                    
+                    break;
+                default:
+                    lines.Add("enter 'help' for help");
+                    lines.Add("enter 'controls' for controls");
+                    break;
+            }
+        }
+
+        private Vertex? GetVertexInGraphByName(string name)
+        {
+            foreach(var ver in graph.vertices)
+            {
+                if(ver.name == name) return ver;
+            }
+            return null;
         }
 
         private bool IsPointInCircleOfVertex(Point p, Vertex u)
