@@ -117,7 +117,10 @@ namespace GraphFrontend2
             {
                 RichTextBox tbweight = (RichTextBox)canvas.Children[9];
                 tr = new TextRange(tbweight.Document.ContentStart, tbweight.Document.ContentEnd);
-                if(double.TryParse(tr.Text, out double weight)) edg.weight = weight;
+                if(Double.TryParse(tr.Text, out double weight))
+                {
+                    edg.weight = weight;
+                }
             }
             mw.ReDraw();
             this.Close();

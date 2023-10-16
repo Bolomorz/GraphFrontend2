@@ -52,7 +52,7 @@ namespace GraphFrontend2 {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DirectedGraph")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Graph")]
         public string Graphtype {
             get {
                 return ((string)(this["Graphtype"]));

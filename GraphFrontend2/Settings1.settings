@@ -12,7 +12,7 @@
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="Graphtype" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">DirectedGraph</Value>
+      <Value Profile="(Default)">Graph</Value>
     </Setting>
   </Settings>
 </SettingsFile>
