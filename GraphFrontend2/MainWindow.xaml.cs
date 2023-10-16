@@ -60,10 +60,15 @@ namespace GraphFrontend2
             }
         }
 
+        public void ReDraw()
+        {
+            current.Draw();
+        }
+
         private void CanvasButtonClick(object sender, MouseButtonEventArgs e)
         {
             var pos = e.GetPosition(canvas1);
-            current.OnClick(MainWindow.ConvertToPoint(pos));
+            current.OnClick(MainWindow.ConvertToPoint(pos), this);
         }
 
         private void SettingsButtonClick(object sender, RoutedEventArgs e)

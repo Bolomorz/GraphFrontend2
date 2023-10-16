@@ -52,25 +52,12 @@ namespace GraphFrontend2
             canvas.Children.Clear();
         }
 
-        public CanvasGraph(Graph _graph, GraphType _type, Canvas _canvas)
-        {
-            graph = _graph;
-            canvas = _canvas;
-            type = _type;
-            activevertex = null;
-            activeedge = null;
-            vertexcount = 0;
-            foreach(var element in graph.vertices) vertexcount++;
-            canvas.Children.Clear();
-
-        }
-
         public void Draw()
         {
             DrawGraph();
         }
 
-        public void OnClick(Point mouse)
+        public void OnClick(Point mouse, MainWindow mw)
         {
             if(activevertex is not null)
             {
@@ -93,7 +80,7 @@ namespace GraphFrontend2
                 }
                 else if(ver is not null && activevertex == ver)
                 {
-                    ConfigWindow cw = new ConfigWindow(ver);
+                    ConfigWindow cw = new ConfigWindow(ver, mw);
                     cw.Show();
                 }
                 else
@@ -107,7 +94,8 @@ namespace GraphFrontend2
                 var edg = EdgeOfPosition(mouse);
                 if(edg is not null && edg == activeedge)
                 {
-                    //Implement DoubleClick
+                    ConfigWindow cw = new ConfigWindow(edg, mw);
+                    cw.Show();
                 }
                 else
                 {
@@ -370,7 +358,7 @@ namespace GraphFrontend2
         private bool IsPointInCircleOfVertex(Point p, Vertex u)
         {
             var lhs = Math.Pow(u.position.x - p.X, 2) + Math.Pow(u.position.y - p.Y, 2);
-            var rhs = Math.Pow(Settings1.Default.Vertexradius, 2);
+            var rhs = Math.Pow(Settings1.Default.Vertexradius/2, 2);
             if (lhs <= rhs) return true; else return false;
         }
 
