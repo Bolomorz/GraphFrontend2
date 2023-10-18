@@ -103,15 +103,24 @@ namespace GraphFrontend2
         {
             RichTextBox tbname = (RichTextBox)canvas.Children[3];
             TextRange tr = new TextRange(tbname.Document.ContentStart, tbname.Document.ContentEnd);
-            string text = tr.Text;
-            ver.name = text;
+            ver.name = tr.Text;
             mw.ReDraw();
             this.Close();
         }
 
         private void EdgeButtonClick(object sender, RoutedEventArgs e) 
         {
-
+            RichTextBox tbname = (RichTextBox)canvas.Children[7];
+            TextRange tr = new TextRange(tbname.Document.ContentStart, tbname.Document.ContentEnd);
+            edg.name = tr.Text;
+            if(edg.weight is not null)
+            {
+                RichTextBox tbweight = (RichTextBox)canvas.Children[9];
+                tr = new TextRange(tbweight.Document.ContentStart, tbweight.Document.ContentEnd);
+                if(double.TryParse(tr.Text, out double weight)) edg.weight = weight;
+            }
+            mw.ReDraw();
+            this.Close();
         }
 
         private void CreateButton(int left, int top, Button bt, CWType type)

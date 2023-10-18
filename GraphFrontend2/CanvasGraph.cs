@@ -17,7 +17,7 @@ namespace GraphFrontend2
     public enum GraphType { Graph, DirectedGraph, WeightedGraph, WeightedDirectedGraph }
     public class CanvasGraph
     {
-        protected Graph graph { get; set; }
+        protected IGraph graph { get; set; }
         protected Canvas canvas { get; set; }
         protected Vertex? activevertex { get; set; }
         protected Edge? activeedge { get; set; }
@@ -492,8 +492,8 @@ namespace GraphFrontend2
             System.Windows.Point p = new System.Windows.Point(p1.x + ((p2.x - p1.x) / 1.35), p1.y + ((p2.y - p1.y) / 1.35));
             pf.StartPoint = p;
 
-            System.Windows.Point lpoint = new System.Windows.Point(p.X + 6, p.Y + 15);
-            System.Windows.Point rpoint = new System.Windows.Point(p.X - 6, p.Y + 15);
+            System.Windows.Point lpoint = new System.Windows.Point(p.X + 3, p.Y + 15);
+            System.Windows.Point rpoint = new System.Windows.Point(p.X - 3, p.Y + 15);
             LineSegment seg1 = new LineSegment();
             seg1.Point = lpoint;
             pf.Segments.Add(seg1);
