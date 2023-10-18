@@ -11,18 +11,38 @@ using System.Drawing;
 using Graphs;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+using System.Xml;
 
 namespace GraphFrontend2
 {
-    public enum GraphType { Graph, DirectedGraph, WeightedGraph, WeightedDirectedGraph }
+    [DataContract(Name = "Type")]
+    public enum GraphType {
+        [EnumMember] Graph,
+        [EnumMember] DirectedGraph, 
+        [EnumMember] WeightedGraph, 
+        [EnumMember] WeightedDirectedGraph }
+
     public class CanvasGraph
     {
-        protected IGraph graph { get; set; }
-        protected Canvas canvas { get; set; }
+        protected AGraph graph { get; set; }
+        protected Canvas canvas;
         protected Vertex? activevertex { get; set; }
         protected Edge? activeedge { get; set; }
-        protected GraphType type { get; set; }
+        public GraphType type { get; set; }
         protected int vertexcount { get; set; }
+
+        protected CanvasGraph(GraphType _gtype, Canvas _canvas, AGraph _graph, int _vertexcount)
+        {
+            graph = _graph;
+            canvas = _canvas;
+            type = _gtype;
+            activeedge = null;
+            activevertex = null;
+            vertexcount = _vertexcount;
+        }
 
         public CanvasGraph(GraphType _gtype, Canvas _canvas)
         {
@@ -50,6 +70,54 @@ namespace GraphFrontend2
             type = _gtype;
             vertexcount = 0;
             canvas.Children.Clear();
+        }
+
+        public void Serialize(string filepath)
+        {
+            using (var stream = new FileStream(filepath, FileMode.Create))
+            {
+                switch(System.IO.Path.GetExtension(filepath))
+                {
+                    case ".cagrdg":
+                        DataContractSerializer serd = new DataContractSerializer(typeof(Directed));
+                        serd.WriteObject(stream, new Directed(type, (DirectedGraph)graph, vertexcount));
+                        break;
+                    case ".cagrug":
+                        DataContractSerializer seru = new DataContractSerializer(typeof(UnDirected));
+                        seru.WriteObject(stream, new UnDirected(type, (Graph)graph, vertexcount));
+                        break;
+                }
+            }
+        }
+
+        public CanvasGraph? Deserialize(string filepath)
+        {
+            CanvasGraph? cg = null;
+            using (var stream = new FileStream(filepath, FileMode.Open))
+            {
+                XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(stream, new XmlDictionaryReaderQuotas());
+                switch (System.IO.Path.GetExtension(filepath))
+                {
+                    case ".cagrdg":
+                        DataContractSerializer serd = new DataContractSerializer(typeof(Directed));
+                        Directed? d = (Directed?)serd.ReadObject(reader, true);
+                        if(d is not null)
+                        {
+                            cg = new CanvasGraph(d.type, canvas, d.graph, d.vertexcount);
+                        }
+                        break;
+                    case ".cagrug":
+                        DataContractSerializer seru = new DataContractSerializer(typeof(UnDirected));
+                        UnDirected? u = (UnDirected?)seru.ReadObject(reader, true);
+                        if (u is not null)
+                        {
+                            cg = new CanvasGraph(u.type, canvas, u.graph, u.vertexcount);
+                        }
+                        break;
+                }
+                reader.Close();
+            }
+            return cg;
         }
 
         public void Draw()
@@ -446,7 +514,7 @@ namespace GraphFrontend2
             var width = formatted.Width;
             var height = formatted.Height;
             var bgeom = formatted.BuildGeometry(new System.Windows.Point(pos.x - width / 2, pos.y - height / 2));
-            var path = new Path();
+            var path = new System.Windows.Shapes.Path();
             path.Data = bgeom;
             path.Stroke = brush;
             path.StrokeThickness = 0.5;
@@ -514,7 +582,7 @@ namespace GraphFrontend2
             pg.Transform = transform;
             lg.Children.Add(pg);
 
-            Path path = new Path();
+            System.Windows.Shapes.Path path = new System.Windows.Shapes.Path();
             path.Data = lg;
             path.StrokeThickness = 1;
             path.Stroke = path.Fill = brush;

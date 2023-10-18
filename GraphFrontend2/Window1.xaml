@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphFrontend2"
         mc:Ignorable="d"
-        Title="Solution to Command" Height="500" Width="600">
+        Title="Command" Height="500" Width="600">
     <Grid>
         <RichTextBox VerticalScrollBarVisibility="Visible" x:Name="rtb" Margin="10" IsReadOnly="True">
             

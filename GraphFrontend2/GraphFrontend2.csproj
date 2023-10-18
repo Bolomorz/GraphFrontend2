@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Reference Include="Graphs">
-      <HintPath>..\..\GraphAlgorithms\Graphs\obj\Debug\net7.0\Graphs.dll</HintPath>
+      <HintPath>..\..\Graphs\Graphs\bin\Debug\net7.0\Graphs.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -26,6 +26,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataFiles\" />
   </ItemGroup>
 
 </Project>
