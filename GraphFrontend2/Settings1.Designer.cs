@@ -23,39 +23,51 @@ namespace GraphFrontend2 {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int Vertexradius {
             get {
                 return ((int)(this["Vertexradius"]));
             }
+            set {
+                this["Vertexradius"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Consolas")]
         public string Font {
             get {
                 return ((string)(this["Font"]));
             }
+            set {
+                this["Font"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public double Fontsize {
             get {
                 return ((double)(this["Fontsize"]));
             }
+            set {
+                this["Fontsize"] = value;
+            }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Graph")]
         public string Graphtype {
             get {
                 return ((string)(this["Graphtype"]));
+            }
+            set {
+                this["Graphtype"] = value;
             }
         }
     }

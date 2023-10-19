@@ -29,26 +29,12 @@ namespace GraphFrontend2
         public MainWindow()
         {
             InitializeComponent();
-            try
-            {
-                current = new CanvasGraph((GraphType)Enum.Parse(typeof(GraphType), Settings1.Default.Graphtype), canvas1);
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                current = new CanvasGraph(GraphType.Graph, canvas1);
-            }
+            NewGraph();
         }
 
         public static System.Drawing.Point ConvertToPoint(System.Windows.Point pos)
         {
             return new System.Drawing.Point(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y));
-        }
-
-        public void LoadGraph(CanvasGraph cg)
-        {
-            current = cg;
-            current.Draw();
         }
 
         public void NewGraph()
@@ -62,6 +48,7 @@ namespace GraphFrontend2
                 MessageBox.Show(ex.ToString());
                 current = new CanvasGraph(GraphType.Graph, canvas1);
             }
+            GTL.Content = "Graphtype: " + current.type.ToString();
         }
 
         public void ReDraw()
@@ -73,6 +60,7 @@ namespace GraphFrontend2
         {
             var pos = e.GetPosition(canvas1);
             current.OnClick(MainWindow.ConvertToPoint(pos), this);
+            canvas1.Focus();
         }
 
         private void SettingsButtonClick(object sender, RoutedEventArgs e)
@@ -87,7 +75,7 @@ namespace GraphFrontend2
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Open File";
             ofd.InitialDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(dir, @"..\..\..\DataFiles"));
-            ofd.Filter = "CanvasGraph Files(.cagrdg)|*.cagrdg|CanvasGraph Files(.cagrug)|*cagrug";
+            ofd.Filter = "CanvasGraph Files(.cagrdg)|*.cagrdg|CanvasGraph Files(.cagrug)|*.cagrug";
             ofd.FilterIndex = 1;
             ofd.Multiselect = false;
             ofd.RestoreDirectory = false;
@@ -103,6 +91,7 @@ namespace GraphFrontend2
                 {
                     current = cg;
                     current.Draw();
+                    GTL.Content = "Graphtype: " + current.type.ToString();
                 }
             }
         }
@@ -156,14 +145,35 @@ namespace GraphFrontend2
 
         private void NewButtonClick(object sender, RoutedEventArgs e)
         {
-            try
+            ListBox lb = new ListBox();
+            canvas1.Children.Add(lb);
+            lb.Items.Clear();
+            lb.Items.Add(GraphType.Graph);
+            lb.Items.Add(GraphType.DirectedGraph);
+            lb.Items.Add(GraphType.WeightedGraph);
+            lb.Items.Add(GraphType.WeightedDirectedGraph);
+            lb.SelectionChanged += Lb_SelectionChanged;
+            lb.Margin = new Thickness(1380, 10, 0, 0);
+            lb.Width = 150;
+        }
+
+        private void Lb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListBox lb = (ListBox)sender;
+            Settings1.Default.Graphtype = lb.SelectedItem.ToString();
+            Settings1.Default.Save();
+            canvas1.Children.Remove(lb);
+            NewGraph();
+        }
+
+        private void canvas1_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch(e.Key)
             {
-                current = new CanvasGraph((GraphType)Enum.Parse(typeof(GraphType), Settings1.Default.Graphtype), canvas1);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                current = new CanvasGraph(GraphType.Graph, canvas1);
+                case Key.Delete:
+                    current.DeleteElement();
+                    current.Draw();
+                    break;
             }
         }
     }

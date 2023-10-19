@@ -2,16 +2,16 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="GraphFrontend2" GeneratedClassName="Settings1">
   <Profiles />
   <Settings>
-    <Setting Name="Vertexradius" Type="System.Int32" Scope="Application">
+    <Setting Name="Vertexradius" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
-    <Setting Name="Font" Type="System.String" Scope="Application">
+    <Setting Name="Font" Type="System.String" Scope="User">
       <Value Profile="(Default)">Consolas</Value>
     </Setting>
-    <Setting Name="Fontsize" Type="System.Double" Scope="Application">
+    <Setting Name="Fontsize" Type="System.Double" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
-    <Setting Name="Graphtype" Type="System.String" Scope="Application">
+    <Setting Name="Graphtype" Type="System.String" Scope="User">
       <Value Profile="(Default)">Graph</Value>
     </Setting>
   </Settings>

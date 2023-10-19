@@ -120,6 +120,20 @@ namespace GraphFrontend2
             return cg;
         }
 
+        public void DeleteElement()
+        {
+            if(activevertex is not null)
+            {
+                graph.RemoveVertex(activevertex);
+                activevertex = null;
+            }
+            else if(activeedge is not null) 
+            {
+                graph.RemoveEdge(activeedge);
+                activeedge = null;
+            }
+        }
+
         public void Draw()
         {
             DrawGraph();
