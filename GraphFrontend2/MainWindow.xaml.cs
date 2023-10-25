@@ -56,10 +56,17 @@ namespace GraphFrontend2
             current.Draw();
         }
 
-        private void CanvasButtonClick(object sender, MouseButtonEventArgs e)
+        private void CanvasLeftClick(object sender, MouseButtonEventArgs e)
         {
             var pos = e.GetPosition(canvas1);
             current.OnClick(MainWindow.ConvertToPoint(pos), this);
+            canvas1.Focus();
+        }
+
+        private void CanvasRightClick(object sender, MouseButtonEventArgs e)
+        {
+            var pos = e.GetPosition(canvas1);
+            current.RightClick(MainWindow.ConvertToPoint(pos));
             canvas1.Focus();
         }
 
@@ -174,6 +181,20 @@ namespace GraphFrontend2
                     current.DeleteElement();
                     current.Draw();
                     break;
+                case Key.Enter:
+                    current.EnterOnTextElement();
+                    current.Draw();
+                    break;
+                case Key.Back:
+                    current.BackspaceOnTextElement();
+                    current.Draw();
+                    break;
+                default:
+                    string key = e.Key.ToString();
+                    current.KeyOnTextElement(key);
+                    current.Draw();
+                    break;
+
             }
         }
     }

@@ -29,19 +29,23 @@ namespace GraphFrontend2
     {
         protected AGraph graph { get; set; }
         protected Canvas canvas;
+        protected TextElement? activeelement { get; set; }
         protected Vertex? activevertex { get; set; }
         protected Edge? activeedge { get; set; }
         public GraphType type { get; set; }
         protected int vertexcount { get; set; }
+        protected List<TextElement> elements { get; set; }
 
-        protected CanvasGraph(GraphType _gtype, Canvas _canvas, AGraph _graph, int _vertexcount)
+        protected CanvasGraph(GraphType _gtype, Canvas _canvas, AGraph _graph, int _vertexcount, List<TextElement> _elements)
         {
             graph = _graph;
             canvas = _canvas;
             type = _gtype;
             activeedge = null;
             activevertex = null;
+            activeelement = null;
             vertexcount = _vertexcount;
+            elements = _elements;
         }
 
         public CanvasGraph(GraphType _gtype, Canvas _canvas)
@@ -67,9 +71,11 @@ namespace GraphFrontend2
             canvas = _canvas;
             activevertex = null;
             activeedge = null;
+            activeelement = null;
             type = _gtype;
             vertexcount = 0;
             canvas.Children.Clear();
+            elements = new List<TextElement>();
         }
 
         public void Serialize(string filepath)
@@ -80,11 +86,11 @@ namespace GraphFrontend2
                 {
                     case ".cagrdg":
                         DataContractSerializer serd = new DataContractSerializer(typeof(Directed));
-                        serd.WriteObject(stream, new Directed(type, (DirectedGraph)graph, vertexcount));
+                        serd.WriteObject(stream, new Directed(type, (DirectedGraph)graph, vertexcount, elements));
                         break;
                     case ".cagrug":
                         DataContractSerializer seru = new DataContractSerializer(typeof(UnDirected));
-                        seru.WriteObject(stream, new UnDirected(type, (Graph)graph, vertexcount));
+                        seru.WriteObject(stream, new UnDirected(type, (Graph)graph, vertexcount, elements));
                         break;
                 }
             }
@@ -103,7 +109,7 @@ namespace GraphFrontend2
                         Directed? d = (Directed?)serd.ReadObject(reader, true);
                         if(d is not null)
                         {
-                            cg = new CanvasGraph(d.type, canvas, d.graph, d.vertexcount);
+                            cg = new CanvasGraph(d.type, canvas, d.graph, d.vertexcount, d.elements);
                         }
                         break;
                     case ".cagrug":
@@ -111,7 +117,7 @@ namespace GraphFrontend2
                         UnDirected? u = (UnDirected?)seru.ReadObject(reader, true);
                         if (u is not null)
                         {
-                            cg = new CanvasGraph(u.type, canvas, u.graph, u.vertexcount);
+                            cg = new CanvasGraph(u.type, canvas, u.graph, u.vertexcount, u.elements);
                         }
                         break;
                 }
@@ -132,6 +138,11 @@ namespace GraphFrontend2
                 graph.RemoveEdge(activeedge);
                 activeedge = null;
             }
+            else if(activeelement is not null)
+            {
+                elements.Remove(activeelement);
+                activeelement = null;
+            }
         }
 
         public void Draw()
@@ -141,7 +152,11 @@ namespace GraphFrontend2
 
         public void OnClick(Point mouse, MainWindow mw)
         {
-            if(activevertex is not null)
+            if(activeelement is not null)
+            {
+                activeelement = null;
+            }
+            else if(activevertex is not null)
             {
                 var ver = VertexOfPosition(mouse);
                 if(ver is not null && activevertex != ver)
@@ -189,6 +204,7 @@ namespace GraphFrontend2
             {
                 var ver = VertexOfPosition(mouse);
                 var edg = EdgeOfPosition(mouse);
+                var ele = ElementOfPosition(mouse);
                 if(ver is not null)
                 {
                     activevertex = ver;
@@ -197,12 +213,31 @@ namespace GraphFrontend2
                 {
                     activeedge = edg;
                 }
+                else if(ele is not null)
+                {
+                    activeelement = ele;
+                }
                 else
                 {
                     Vertex vnew = new Vertex("ver" + vertexcount, new Position(mouse.X, mouse.Y));
                     graph.AddVertex(vnew);
                     vertexcount++;
                 }
+            }
+            DrawGraph();
+        }
+
+        public void RightClick(Point mouse)
+        {
+            if(activeelement is not null)
+            {
+                activeelement.position = new Position(mouse.X, mouse.Y);
+            }
+            else
+            {
+                TextElement newele = new TextElement(new Position(mouse.X, mouse.Y), "");
+                elements.Add(newele);
+                activeelement = newele;
             }
             DrawGraph();
         }
@@ -428,6 +463,30 @@ namespace GraphFrontend2
             return lines;
         }
 
+        public void EnterOnTextElement()
+        {
+            if (activeelement is not null)
+            {
+                activeelement = null;
+            }
+        }
+
+        public void BackspaceOnTextElement()
+        {
+            if (activeelement is not null)
+            {
+                activeelement.text = activeelement.text.Substring(0, activeelement.text.Length - 1);
+            }
+        }
+
+        public void KeyOnTextElement(string key)
+        {
+            if (activeelement is not null)
+            {
+                activeelement.text += key;
+            }
+        }
+
         private Vertex? GetVertexInGraphByName(string name)
         {
             foreach(var ver in graph.vertices)
@@ -459,6 +518,21 @@ namespace GraphFrontend2
             if (p.X >= left && p.X <= right && p.Y <= top && p.Y >= bottom) return true; else return false;
         }
 
+        private bool IsPointInRectangleOfTextElement(Point p, TextElement e)
+        {
+            string line = e.text;
+            FormattedText formatted = new FormattedText(line, CultureInfo.CurrentCulture, System.Windows.FlowDirection.LeftToRight, new Typeface(Settings1.Default.Font), Settings1.Default.Fontsize, Brushes.Black, VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
+            var width = formatted.Width;
+            var height = formatted.Height;
+            var x = e.position.x;
+            var y = e.position.y;
+            var left = x - width / 2;
+            var top = y + height / 2;
+            var right = x + width / 2;
+            var bottom = y - height / 2;
+            if (p.X >= left && p.X <= right && p.Y <= top && p.Y >= bottom) return true; else return false;
+        }
+
         private Vertex? VertexOfPosition(Point p)
         {
             foreach(var v in graph.vertices)
@@ -473,6 +547,15 @@ namespace GraphFrontend2
             foreach(var e in graph.edges)
             {
                 if(IsPointInRectangleOfEdge(p, e)) return e;
+            }
+            return null;
+        }
+
+        private TextElement? ElementOfPosition(Point p)
+        {
+            foreach(var e in elements)
+            {
+                if(IsPointInRectangleOfTextElement(p, e)) return e;
             }
             return null;
         }
@@ -504,6 +587,17 @@ namespace GraphFrontend2
                 {
                     DrawLine(e.position, e.v1.position, e.v2.position, Brushes.Black);
                     DrawText(e.position, e.name + ": " + e.weight, Brushes.Black);
+                }
+            }
+            foreach(var e in elements)
+            {
+                if(activeelement is not null && activeelement == e)
+                {
+                    DrawText(e.position, e.text + "/", Brushes.Blue);
+                }
+                else
+                {
+                    DrawText(e.position, e.text, Brushes.Black);
                 }
             }
         }
