@@ -235,9 +235,17 @@ namespace GraphFrontend2
             }
             else
             {
-                TextElement newele = new TextElement(new Position(mouse.X, mouse.Y), "");
-                elements.Add(newele);
-                activeelement = newele;
+                var ele = ElementOfPosition(mouse);
+                if (ele is null)
+                {
+                    TextElement newele = new TextElement(new Position(mouse.X, mouse.Y), "");
+                    elements.Add(newele);
+                    activeelement = newele;
+                }
+                else
+                {
+                    activeelement = ele;
+                }
             }
             DrawGraph();
         }
@@ -266,10 +274,12 @@ namespace GraphFrontend2
                     break;
                 case "controls":
                     lines.Add("[Controls]");
-                    lines.Add("click on free space to create new vertex");
+                    lines.Add("left click on free space to create new vertex");
+                    lines.Add("right click´on free space to create new text");
                     lines.Add("activate vertex by clicking on circle of vertex");
                     lines.Add("activate edge by clicking on label of edge");
-                    lines.Add("activated vertex or edge will be highlighted blue");
+                    lines.Add("activate text by clicking on text");
+                    lines.Add("activated vertex/edge/text will be highlighted blue");
                     lines.Add("[Activated vertex]");
                     lines.Add("\tclick on activated vertex to open config menu for vertex");
                     lines.Add("\tclick on other vertex to create edge between vertices");
@@ -279,6 +289,10 @@ namespace GraphFrontend2
                     lines.Add("\tclick on activated edge to open config menu for edge");
                     lines.Add("\tclick on free space to relocate label of edge");
                     lines.Add("\tpress 'DEL' to delete edge");
+                    lines.Add("[Activated text]");
+                    lines.Add("\tenter text to append to element");
+                    lines.Add("\tpress 'BACK' to delete one character from text");
+                    lines.Add("\tpress 'DEL' to delete text");
                     break;
                 case "dijkstra":
                     if(type != GraphType.WeightedDirectedGraph)
