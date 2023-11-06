@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <Reference Include="Graphs">
-      <HintPath>..\..\GraphAlgorithms\Graphs\bin\Debug\net7.0\Graphs.dll</HintPath>
+      <HintPath>Graphs.dll</HintPath>
     </Reference>
   </ItemGroup>
 
