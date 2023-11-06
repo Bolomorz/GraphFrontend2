@@ -88,7 +88,8 @@ namespace GraphFrontend2
 
         private void SettingsButtonClick(object sender, RoutedEventArgs e)
         {
-
+            SettingsWindow sw = new SettingsWindow(this);
+            sw.Show();
         }
 
         private void LoadButtonClick(object sender, RoutedEventArgs e)
@@ -211,6 +212,15 @@ namespace GraphFrontend2
                     current.Draw();
                     break;
 
+            }
+        }
+
+        private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MessageBoxResult mbr = MessageBox.Show(this, "Do you want to save current graph?", "Save Dialog", MessageBoxButton.YesNo);
+            if(mbr == MessageBoxResult.Yes)
+            {
+                SaveButtonClick(SaveButton, new RoutedEventArgs());
             }
         }
     }

@@ -5,14 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphFrontend2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1800">
+        Title="MainWindow" Height="900" Width="1800" Closing="OnWindowClose">
     <Grid>
-        <Canvas x:Name="canvas1" Margin="50,50,50,50" Background="#FFD8E0E6" OpacityMask="#FFD6E2E2" MouseLeftButtonDown="CanvasLeftClick" MouseRightButtonDown="CanvasRightClick" KeyDown="canvas1_KeyDown" Focusable="True"/>
-        <Button x:Name="SettingsButton" Content="Settings" HorizontalAlignment="Left" Margin="1680,30,0,0" VerticalAlignment="Top" Click="SettingsButtonClick" Width="70"/>
-        <Button x:Name="LoadSavedButton" Content="Load" HorizontalAlignment="Left" Margin="1600,30,0,0" VerticalAlignment="Top" Click="LoadButtonClick" Width="70"/>
-        <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Left" Margin="1520,30,0,0" VerticalAlignment="Top" Click="SaveButtonClick" Width="70"/>
-        <Button x:Name="NewButton" Content="New" HorizontalAlignment="Left" Margin="1440,30,0,0" VerticalAlignment="Top" Click="NewButtonClick" Width="70"/>
-        <TextBox x:Name="CommandTB" HorizontalAlignment="Left" Margin="50,30,0,0" TextWrapping="Wrap" Text="enter 'help' for help" VerticalAlignment="Top" Width="800" KeyDown="tbkeydown"/>
-        <Label x:Name="GTL" Content="" HorizontalAlignment="Left" Margin="1200,30,0,0" VerticalAlignment="Top" Width="200"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="43*"/>
+        </Grid.ColumnDefinitions>
+        <Canvas x:Name="canvas1" Margin="50,50,50,50" Background="#FFD8E0E6" OpacityMask="#FFD6E2E2" MouseLeftButtonDown="CanvasLeftClick" MouseRightButtonDown="CanvasRightClick" KeyDown="canvas1_KeyDown" Focusable="True" Grid.ColumnSpan="2"/>
+        <Button x:Name="SettingsButton" Content="Settings" HorizontalAlignment="Left" Margin="1600,30,0,0" VerticalAlignment="Top" Click="SettingsButtonClick" Width="70" Grid.Column="1"/>
+        <Button x:Name="LoadSavedButton" Content="Load" HorizontalAlignment="Left" Margin="1520,30,0,0" VerticalAlignment="Top" Click="LoadButtonClick" Width="70" Grid.Column="1"/>
+        <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Left" Margin="1440,30,0,0" VerticalAlignment="Top" Click="SaveButtonClick" Width="70" Grid.Column="1"/>
+        <Button x:Name="NewButton" Content="New" HorizontalAlignment="Left" Margin="1360,30,0,0" VerticalAlignment="Top" Click="NewButtonClick" Width="70" Grid.Column="1"/>
+        <TextBox x:Name="CommandTB" HorizontalAlignment="Left" Margin="50,30,0,0" TextWrapping="Wrap" Text="enter 'help' for help" VerticalAlignment="Top" Width="800" KeyDown="tbkeydown" Grid.ColumnSpan="2"/>
+        <Label x:Name="GTL" Content="" HorizontalAlignment="Left" Margin="1120,30,0,0" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
     </Grid>
 </Window>

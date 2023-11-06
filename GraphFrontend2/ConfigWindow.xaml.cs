@@ -58,6 +58,7 @@ namespace GraphFrontend2
             CreateRTB(300, 85, 1 * (height + 10) + 10, false, tbname, vertex.name.ToString(), Brushes.Gainsboro);
             Button btver = new Button();
             CreateButton(10, 2 * (height + 10) + 10, btver, CWType.Vertex);
+            this.Height = 160;
         }
 
         private void ControlsForEdge(Edge edge)
@@ -82,7 +83,8 @@ namespace GraphFrontend2
                 CreateRTB(75, 10, 4 * (height + 10) + 10, true, lbweight, "Weight:", Brushes.White);
                 CreateRTB(300, 85, 4 * (height + 10) + 10, false, tbweight, edge.weight.ToString(), Brushes.Gainsboro);
             }
-            CreateButton(10, 5 * (height + 10) + 10, new Button(), CWType.Edge); 
+            CreateButton(10, 5 * (height + 10) + 10, new Button(), CWType.Edge);
+            this.Height = 260;
         }
 
         private void CreateRTB(int width, int left, int top, bool ro, RichTextBox tb, string text, Brush brush)
