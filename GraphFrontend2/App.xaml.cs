@@ -13,5 +13,18 @@ namespace GraphFrontend2
     /// </summary>
     public partial class App : Application
     {
+        void AppStartup(object sender, StartupEventArgs e)
+        {
+            MainWindow mw;
+            if(e.Args.Length > 0)
+            {
+                mw = new MainWindow(e.Args[0]);
+            }
+            else
+            {
+                mw = new MainWindow();
+            }
+            mw.Show();
+        }
     }
 }

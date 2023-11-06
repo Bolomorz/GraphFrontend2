@@ -5,13 +5,8 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <StartupObject></StartupObject>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Include="Graphs">
-      <HintPath>..\..\Graphs\Graphs\bin\Debug\net7.0\Graphs.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Settings1.Designer.cs">
@@ -30,6 +25,12 @@
 
   <ItemGroup>
     <Folder Include="DataFiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Graphs">
+      <HintPath>..\..\GraphAlgorithms\Graphs\bin\Debug\net7.0\Graphs.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

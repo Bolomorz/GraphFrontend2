@@ -19,12 +19,12 @@ namespace GraphFrontend2
     /// </summary>
     public partial class OutputWindow : Window
     {
-        public OutputWindow(List<string> _lines, string command)
+        public OutputWindow(List<string> _lines, string _command)
         {
             InitializeComponent();
             rtb.FontFamily = new FontFamily(Settings1.Default.Font);
             rtb.FontSize = Settings1.Default.Fontsize;
-            rtb.AppendText("Command: " + command);
+            rtb.AppendText("Command: " + _command);
             foreach(string line in _lines)
             {
                 rtb.AppendText(Environment.NewLine + ">>> " + line);

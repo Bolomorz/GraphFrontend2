@@ -26,6 +26,22 @@ namespace GraphFrontend2
     public partial class MainWindow : Window
     {
         protected CanvasGraph current { get; set; }
+        public MainWindow(string args)
+        {
+            InitializeComponent();
+            NewGraph();
+            if (System.IO.Path.GetExtension(args).ToLower() == ".cagrdg" || System.IO.Path.GetExtension(args).ToLower() == ".cagrug")
+            {
+                CanvasGraph? cg = current.Deserialize(args);
+                if (cg is not null)
+                {
+                    current = cg;
+                    current.Draw();
+                    GTL.Content = "Graphtype: " + current.type.ToString();
+                }
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
